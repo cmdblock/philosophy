@@ -14,11 +14,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 加上这个可以确保 Quartz 能读取到文件的历史修改时间
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: "npm"
 
       - name: Install deps
         run: npm ci
@@ -26,5 +29,10 @@ jobs:
       - name: Build Quartz
         run: npx quartz build
 
+      # 替换掉之前的 npx quartz deploy
       - name: Deploy to GitHub Pages
-        run: npx quartz deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public # Quartz build 默认生成的文件夹名称
+          publish_branch: gh-pages # 部署到的目标分支
