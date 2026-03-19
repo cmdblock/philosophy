@@ -6,7 +6,14 @@ on:
       - v4
 
 permissions:
-  contents: write
+  contents: read
+  pages: write # 必须：允许部署到 Pages
+  id-token: write # 必须：用于身份验证
+
+# 确保同一时间只有一个部署任务在运行
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -15,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 加上这个可以确保 Quartz 能读取到文件的历史修改时间
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -29,10 +36,20 @@ jobs:
       - name: Build Quartz
         run: npx quartz build
 
-      # 替换掉之前的 npx quartz deploy
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      # 第一步：把构建出来的 public 文件夹打成包
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public # Quartz build 默认生成的文件夹名称
-          publish_branch: gh-pages # 部署到的目标分支
+          path: ./public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # 第二步：将包发布到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
