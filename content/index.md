@@ -1,6 +1,9 @@
 ---
-title: Welcome to Quartz
+title: 哲学史
 ---
 
-This is a blank Quartz installation.
-See the [documentation](https://quartz.jzhao.xyz) for how to get started.
+> 🧠在思想的河流里，我们并不孤单。
+
+哲学不仅仅是故纸堆里的术语，它是人类对世界最深沉的发问。我们整理了那些改变世界运行逻辑的姓名与篇章，试图在这个碎片化的时代，为你保留一片思考的净土。
+
+不论你是想寻找康德的『道德律』，还是对斯多葛学派的『宁静』感兴趣，这里都有你想要的答案。
